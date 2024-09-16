@@ -13,7 +13,8 @@
         android:layout_height="45dp"/>
     <TextView
         android:id="@+id/item_tensp"
-        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textSize="20sp"
         android:layout_marginLeft="10dp"
         android:text="Giay"
         android:textColor="@android:color/holo_red_light"

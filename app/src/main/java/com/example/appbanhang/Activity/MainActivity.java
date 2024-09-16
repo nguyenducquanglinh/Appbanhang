@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -22,7 +23,10 @@ import android.widget.ViewFlipper;
 
 import com.bumptech.glide.Glide;
 import com.example.appbanhang.Adapter.LoaiSpAdapter;
+import com.example.appbanhang.Adapter.MauSanPhamAdapter;
 import com.example.appbanhang.Model.LoaiSp;
+import com.example.appbanhang.Model.MauSanPham;
+import com.example.appbanhang.Model.MauSanPhamModel;
 import com.example.appbanhang.R;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
@@ -49,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     List<LoaiSp> mangloaisp;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     ApiBanHang apiBanHang;
+    List<MauSanPham> mangMauSp;
+    MauSanPhamAdapter spAdapter;
 
 
 
@@ -65,9 +71,29 @@ public class MainActivity extends AppCompatActivity {
 
             ActionViewFlipper();
             getLoaiSanPham();
+            getMauSp();
         }else{
             Toast.makeText(getApplicationContext(),"khong co internet",Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void getMauSp() {
+        compositeDisposable.add(apiBanHang.getMauSp()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        mauSanPhamModel -> {
+                            if (mauSanPhamModel.isSuccess()){
+                                mangMauSp = mauSanPhamModel.getResult();
+                                spAdapter = new MauSanPhamAdapter(getApplicationContext(), mangMauSp);
+                                recyclerViewManHinhChinh.setAdapter(spAdapter);
+                            }
+
+                        },
+                        throwable -> {
+                            Toast.makeText(getApplicationContext(),"Khong ket noi duoc voi server"+throwable.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                ));
     }
 
     private void getLoaiSanPham() {
@@ -92,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void ActionViewFlipper() {
         List<String> mangquangcao = new ArrayList<>();
-        mangquangcao.add("https://bizweb.dktcdn.net/100/339/085/themes/699262/assets/slider_1_image.png?1702807072310");
+        mangquangcao.add("https://thietke6d.com/wp-content/uploads/2021/05/banner-quang-cao-giay-3.webp");
         mangquangcao.add("https://bizweb.dktcdn.net/100/339/085/themes/699262/assets/slider_2_image.png?1702807072310");
         mangquangcao.add("https://bizweb.dktcdn.net/100/339/085/themes/699262/assets/slider_3_image.png?1702807072310");
         for (int i =0; i<mangquangcao.size(); i++){
@@ -126,12 +152,15 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbarmanhinhchinh);
         viewFlipper = findViewById(R.id.viewlipper);
         recyclerViewManHinhChinh = findViewById(R.id.recycleview);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
+        recyclerViewManHinhChinh.setLayoutManager(layoutManager);
+        recyclerViewManHinhChinh.setHasFixedSize(true);
         listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
         navigationView = findViewById(R.id.navigationview);
         drawerLayout = findViewById(R.id.drawerlayout);
         //khoi tao list
         mangloaisp = new ArrayList<>();
-        //khoi tao adapter
+        mangMauSp = new ArrayList<>();
 
     }
     public boolean isConnected(Context context) {
