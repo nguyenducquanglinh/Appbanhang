@@ -1,6 +1,8 @@
 package com.example.appbanhang.Model;
 
-public class MauSanPham {
+import java.io.Serializable;
+
+public class MauSanPham implements Serializable {
     int id;
     String tensp;
     String hinhanh;
