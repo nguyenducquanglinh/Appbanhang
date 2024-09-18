@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(giay);
                         break;
                     case 2:
-                        Intent dep = new Intent(getApplicationContext(), DepActivity.class);
+                        Intent dep = new Intent(getApplicationContext(), GiayActivity.class);
+                        dep.putExtra("loai",2);
                         startActivity(dep);
                         break;
 

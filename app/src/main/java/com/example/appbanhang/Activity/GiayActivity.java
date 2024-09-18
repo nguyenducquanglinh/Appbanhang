@@ -1,11 +1,13 @@
 package com.example.appbanhang.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -33,6 +35,9 @@ public class GiayActivity extends AppCompatActivity {
     int loai;
     GiayAdapter adapterGiay;
     List<MauSanPham> mauSanPhamList;
+    LinearLayoutManager linearLayoutManager;
+    Handler handler = new Handler();
+    boolean isLoading = false;
 
 
     @Override
@@ -44,19 +49,78 @@ public class GiayActivity extends AppCompatActivity {
 
         AnhXa();
         ActionToolBar();
-        getData();
+        getData(page);
+        addEventLoad();
     }
 
-    private void getData() {
+    private void addEventLoad() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(isLoading == false){
+                    if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == mauSanPhamList.size()-1){
+                        isLoading = true;
+                        loadMore();
+                    }
+                }
+            }
+        });
+    }
+
+    private void loadMore() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                // add null
+                mauSanPhamList.add(null);
+                adapterGiay.notifyItemInserted(mauSanPhamList.size()-1);
+            }
+        });
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //remove null
+                mauSanPhamList.remove(mauSanPhamList.size()-1);
+                adapterGiay.notifyItemRemoved(mauSanPhamList.size());
+                page = page+1;
+                getData(page);
+                adapterGiay.notifyDataSetChanged();
+                isLoading = false;
+
+            }
+        },2000);
+    }
+
+    private void getData(int page) {
         compositeDisposable.add(apiBanHang.getSanPham(page,loai)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         MauSanPhamModel ->{
                             if (MauSanPhamModel.isSuccess()){
-                                mauSanPhamList = MauSanPhamModel.getResult();
-                                adapterGiay = new GiayAdapter(getApplicationContext(), mauSanPhamList);
-                                recyclerView.setAdapter(adapterGiay);
+                                if(adapterGiay == null){
+                                    mauSanPhamList = MauSanPhamModel.getResult();
+                                    adapterGiay = new GiayAdapter(getApplicationContext(), mauSanPhamList);
+                                    recyclerView.setAdapter(adapterGiay);
+                                }else {
+                                    int vitri = mauSanPhamList.size()-1;
+                                    int soluongadd = MauSanPhamModel.getResult().size();
+                                    for (int i= 0 ; i<soluongadd; i++){
+                                        mauSanPhamList.add(MauSanPhamModel.getResult().get(i));
+                                    }
+                                    adapterGiay.notifyItemRangeInserted(vitri,soluongadd);
+                                }
+
+
+                            }else {
+                                Toast.makeText(getApplicationContext(),"Đã hết dữ liệu",Toast.LENGTH_LONG).show();
+                                isLoading =true;
                             }
 
                         },
@@ -81,8 +145,8 @@ public class GiayActivity extends AppCompatActivity {
     private void AnhXa() {
         toolbar = findViewById(R.id.toobar);
         recyclerView = findViewById(R.id.recycleview_giay);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         mauSanPhamList = new ArrayList<>();
     }
