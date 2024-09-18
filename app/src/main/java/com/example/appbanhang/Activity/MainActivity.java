@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         Intent giay = new Intent(getApplicationContext(), GiayActivity.class);
+                        giay.putExtra("loai",1);
                         startActivity(giay);
                         break;
                     case 2:
