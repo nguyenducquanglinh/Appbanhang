@@ -63,7 +63,7 @@
                 android:id="@+id/txtgiasp"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="#F40303"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:gravity="center"

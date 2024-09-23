@@ -51,5 +51,9 @@ dependencies {
     implementation("com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0")  // RxJava3 Adapter for Retrofit
     // bradge
     implementation ("com.nex3z:notification-badge:1.0.4")
+    // even bus
+    implementation ("org.greenrobot:eventbus:3.2.0")
+    //Paper
+    implementation ("io.github.pilgr:paperdb:2.7.2")
 
 }

@@ -40,14 +40,14 @@
                     android:text="15000"
                     android:layout_marginLeft="10dp"
                     android:textSize="15sp"
-                    android:layout_weight="5"
+                    android:layout_weight="6"
                     android:textColor="@android:color/holo_red_light"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <ImageView
                     android:src="@drawable/ic_baseline_remove_24"
                     android:id="@+id/item_giohang_tru"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <TextView
@@ -62,11 +62,11 @@
                 <ImageView
                     android:src="@drawable/ic_baseline_add_24"
                     android:id="@+id/item_giohang_cong"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <ImageView
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_baseline_drag_handle_24"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
@@ -74,7 +74,7 @@
                     android:id="@+id/item_giohang_giasp2"
                     android:text="25000 d"
                     android:gravity="center|center_vertical"
-                    android:layout_weight="5"
+                    android:layout_weight="7"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/holo_red_light"
