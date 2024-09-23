@@ -18,6 +18,7 @@ import com.example.appbanhang.Interface.ItemClickListener;
 import com.example.appbanhang.Model.MauSanPham;
 import com.example.appbanhang.R;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class GiayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
