@@ -57,8 +57,7 @@ public class ChiTietActivity extends AppCompatActivity {
         int soluong = Integer.parseInt(spinner.getSelectedItem().toString());
 
         // Loại bỏ dấu phẩy và dấu chấm, sau đó chuyển đổi giá thành long
-        String giaString = mauSanPham.getGiasp().replace(".", "").replace(",", "").replace("₫", "")
-                .trim(); // Loại bỏ ký tự trắng;
+        String giaString = mauSanPham.getGiasp().replace(".", "").replace(",", "").replace("₫", "").trim(); // Loại bỏ ký tự trắng;
         long gia = Long.parseLong(giaString) * soluong;
 
         boolean existsInCart = false;
@@ -86,11 +85,15 @@ public class ChiTietActivity extends AppCompatActivity {
 
     private void updateBadgeCount() {
         int totalItem = 0;
-        for (GioHang item : Utils.manggiohang) {
-            totalItem += item.getSoluong();
+        // Kiểm tra Utils.manggiohang có null hay không
+        if (Utils.manggiohang != null) {
+            for (GioHang item : Utils.manggiohang) {
+                totalItem += item.getSoluong();
+            }
         }
         badge.setText(String.valueOf(totalItem));
     }
+
 
     private void initData() {
         mauSanPham = (MauSanPham) getIntent().getSerializableExtra("chitiet");
@@ -126,8 +129,10 @@ public class ChiTietActivity extends AppCompatActivity {
                 startActivity(giohang);
             }
         });
+        // Kiểm tra và cập nhật badge
         updateBadgeCount();
     }
+
 
     private void ActionToolBar() {
         setSupportActionBar(toolbar);
@@ -140,15 +145,20 @@ public class ChiTietActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utils.manggiohang != null){
-            int totalItem =0;
-            for (int i=0; i<Utils.manggiohang.size(); i++){
-                totalItem = totalItem+ Utils.manggiohang.get(i).getSoluong();
+        // Kiểm tra xem Utils.manggiohang có null hay không trước khi xử lý
+        if (Utils.manggiohang != null) {
+            int totalItem = 0;
+            for (GioHang gioHang : Utils.manggiohang) {
+                totalItem += gioHang.getSoluong();
             }
             badge.setText(String.valueOf(totalItem));
+        } else {
+            badge.setText("0"); // Đặt lại về 0 nếu giỏ hàng rỗng hoặc null
         }
     }
+
 }

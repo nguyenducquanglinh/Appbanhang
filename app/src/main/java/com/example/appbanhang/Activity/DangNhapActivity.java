@@ -5,6 +5,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ public class DangNhapActivity extends AppCompatActivity {
     private AppCompatButton btndangnhap;
     private ApiBanHang apiBanHang;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    boolean isLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,49 @@ public class DangNhapActivity extends AppCompatActivity {
         if (savedEmail != null && savedPass != null) {
             email.setText(savedEmail);
             pass.setText(savedPass);
+            if (Paper.book().read("islogin") != null){
+                boolean flag = Paper.book().read("islogin");
+                if(flag){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dangNhap(Paper.book().read("email"), Paper.book().read("pass"));
+
+                        }
+                    },1000);
+                }
+            }
         }
+    }
+
+    private void dangNhap(String email, String pass) {
+        compositeDisposable.add(apiBanHang.dangNhap(email, pass)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        userModel -> {
+                            if (userModel.isSuccess()) {
+                                isLogin = true;
+                                Paper.book().write("islogin", isLogin);
+
+                                // Assign the current user
+                                Utils.user_current = userModel.getResult().get(0);
+
+                                // Navigate to MainActivity
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                // Handle login failure
+                                Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        },
+                        throwable -> {
+                            // Handle network or other errors
+                            Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                ));
+
     }
 
     /**
@@ -116,31 +160,8 @@ public class DangNhapActivity extends AppCompatActivity {
         // Save email and password using Paper
         Paper.book().write("email", strEmail);
         Paper.book().write("pass", strPass);
+        dangNhap(strEmail,strPass);
 
-        // Make network request to login
-        compositeDisposable.add(apiBanHang.dangNhap(strEmail, strPass)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        userModel -> {
-                            if (userModel.isSuccess()) {
-                                // Assign the current user
-                                Utils.user_current = userModel.getResult().get(0);
-
-                                // Navigate to MainActivity
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                // Handle login failure
-                                Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        },
-                        throwable -> {
-                            // Handle network or other errors
-                            Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                ));
     }
 
     @Override

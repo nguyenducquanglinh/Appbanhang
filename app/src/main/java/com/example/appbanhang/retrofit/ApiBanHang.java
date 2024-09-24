@@ -1,5 +1,6 @@
 package com.example.appbanhang.retrofit;
 
+import com.example.appbanhang.Model.DonHangModel;
 import com.example.appbanhang.Model.LoaiSpModel;
 import com.example.appbanhang.Model.MauSanPhamModel;
 import com.example.appbanhang.Model.UserModel;
@@ -44,5 +45,31 @@ public interface ApiBanHang {
     Observable<UserModel> resetPass(
             @Field("email") String email
     );
+
+    @POST("donhang.php")
+    @FormUrlEncoded
+    Observable<UserModel> createOder(
+            @Field("email") String email,
+            @Field("sdt") String sdt,
+            @Field("tongtien") String tongtien,
+            @Field("iduser") int id,
+            @Field("diachi") String diachi,
+            @Field("soluong") int soluong,
+            @Field("chitiet") String chitiet
+    );
+
+    @POST("xemdonhang.php")
+    @FormUrlEncoded
+    Observable<DonHangModel> xemDonHang(
+            @Field("iduser") int id
+    );
+
+    @POST("timkiem.php")
+    @FormUrlEncoded
+    Observable<MauSanPhamModel> search(
+            @Field("search") String search
+    );
+
+
 
 }
