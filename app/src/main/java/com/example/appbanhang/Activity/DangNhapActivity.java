@@ -43,20 +43,20 @@ public class DangNhapActivity extends AppCompatActivity {
      * Initialize the view components and read saved data if available.
      */
     private void initView() {
-        // Initialize Paper for data persistence
+        // Khởi tạo Paper để duy trì dữ liệu
         Paper.init(this);
 
-        // Initialize Retrofit API client
+        // Khởi tạo ứng dụng khách API Retrofit
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
 
-        // Bind UI components
+        // Liên kết các thành phần UI
         txtdangky = findViewById(R.id.txtdangky);
         txtresetpass = findViewById(R.id.txtresetpass);
         email = findViewById(R.id.email);
         pass = findViewById(R.id.pass);
         btndangnhap = findViewById(R.id.btndangnhap);
 
-        // Read saved email and password
+        // Đọc email và mật khẩu đã lưu
         String savedEmail = Paper.book().read("email");
         String savedPass = Paper.book().read("pass");
 
@@ -69,7 +69,7 @@ public class DangNhapActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            dangNhap(Paper.book().read("email"), Paper.book().read("pass"));
+                            //dangNhap(Paper.book().read("email"), Paper.book().read("pass"));
 
                         }
                     },1000);
@@ -88,20 +88,21 @@ public class DangNhapActivity extends AppCompatActivity {
                                 isLogin = true;
                                 Paper.book().write("islogin", isLogin);
 
-                                // Assign the current user
+                                // Chỉ định người dùng hiện tại
                                 Utils.user_current = userModel.getResult().get(0);
 
-                                // Navigate to MainActivity
+                                // lưu lại thông tin người dùng
+                                Paper.book().write("user", userModel.getResult().get(0));
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else {
-                                // Handle login failure
+                                // Xử lý lỗi đăng nhập
                                 Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         },
                         throwable -> {
-                            // Handle network or other errors
+                            // Xử lý lỗi mạng hoặc lỗi khác
                             Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                 ));
@@ -112,7 +113,7 @@ public class DangNhapActivity extends AppCompatActivity {
      * Set up control listeners for UI components.
      */
     private void initControl() {
-        // Navigate to DangKyActivity (Register Activity)
+        // Điều hướng đến DangKyActivity (Đăng ký hoạt động)
         txtdangky.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +122,7 @@ public class DangNhapActivity extends AppCompatActivity {
             }
         });
 
-        // Navigate to ResetPassActivity (Password Reset Activity)
+        // Điều hướng đến ResetPassActivity (Hoạt động đặt lại mật khẩu)
         txtresetpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,7 +131,7 @@ public class DangNhapActivity extends AppCompatActivity {
             }
         });
 
-        // Handle Login Button Click
+        // Xử lý nút Đăng nhập
         btndangnhap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,7 +147,7 @@ public class DangNhapActivity extends AppCompatActivity {
         String strEmail = email.getText().toString().trim();
         String strPass = pass.getText().toString().trim();
 
-        // Input Validation
+        // Xác thực đầu vào
         if (TextUtils.isEmpty(strEmail)) {
             Toast.makeText(getApplicationContext(), "Bạn chưa nhập Email", Toast.LENGTH_SHORT).show();
             return;
@@ -157,7 +158,7 @@ public class DangNhapActivity extends AppCompatActivity {
             return;
         }
 
-        // Save email and password using Paper
+        //Lưu email và mật khẩu bằng Paper
         Paper.book().write("email", strEmail);
         Paper.book().write("pass", strPass);
         dangNhap(strEmail,strPass);
@@ -168,7 +169,7 @@ public class DangNhapActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // Update UI with current user information if available
+        // Cập nhật UI với thông tin người dùng hiện tại nếu có
         if (Utils.user_current.getEmail() != null && Utils.user_current.getPass() != null) {
             email.setText(Utils.user_current.getEmail());
             pass.setText(Utils.user_current.getPass());
@@ -177,7 +178,7 @@ public class DangNhapActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Clear all disposables to prevent memory leaks
+        // Xóa tất cả các mục dùng một lần để tránh rò rỉ bộ nhớ
         compositeDisposable.clear();
         super.onDestroy();
     }

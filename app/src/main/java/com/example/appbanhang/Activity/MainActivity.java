@@ -30,6 +30,7 @@ import com.example.appbanhang.Adapter.MauSanPhamAdapter;
 import com.example.appbanhang.Model.LoaiSp;
 import com.example.appbanhang.Model.MauSanPham;
 import com.example.appbanhang.Model.MauSanPhamModel;
+import com.example.appbanhang.Model.User;
 import com.example.appbanhang.R;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
@@ -40,6 +41,7 @@ import com.nex3z.notificationbadge.NotificationBadge;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.paperdb.Paper;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -70,7 +72,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
-
+        Paper.init(this);
+        if (Paper.book().read("user") != null) {
+            User user = Paper.book().read("user");
+            Utils.user_current = user;
+        }
         Anhxa();
         ActionBar();
 
@@ -100,13 +106,20 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(giay);
                         break;
                     case 2:
-                        Intent dep = new Intent(getApplicationContext(), GiayActivity.class);
+                        Intent dep = new Intent(getApplicationContext(), DepActivity.class);
                         dep.putExtra("loai",2);
                         startActivity(dep);
                         break;
                     case 5:
                         Intent donhang = new Intent(getApplicationContext(), XemDonActivity.class);
                         startActivity(donhang);
+                        break;
+                    case 6:
+                        // xoa key user
+                        Paper.book().delete("user");
+                        Intent dangnhap = new Intent(getApplicationContext(), DangNhapActivity.class);
+                        startActivity(dangnhap);
+                        finish();
                         break;
 
                 }
@@ -141,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                         loaiSpModel -> {
                             if (loaiSpModel.isSuccess()){
                                 mangloaisp = loaiSpModel.getResult();
+                                mangloaisp.add(new LoaiSp("Đăng xuất","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAaVBMVEX///8BAQHq6uqEhISwsLBYWFirq6sEBAT29vZhYWHk5OTX19dkZGT7+/vs7Ozd3d1cXFw0NDQbGxs6OjpCQkKmpqYgICArKyucnJwSEhIlJSWYmJiCgoKKiopra2ttbW12dnZPT09BQUEyNdlFAAACdklEQVR4nO3c7W7aQBBG4bUTiBPDNpCP0jYkbe//IqMQKN1KTQY0i+c15/yzZIl5tF5+YOPUt6Mu9ymncZdTO/QIlWsRyodQP4T6IdQPoX4I9UOoH0L9EOqHUD+E+iHUD6F+CPVDqB9C/RDqh1A/hPoh1A+hfgj1Q6gfQv0Q6odQP4T6IdQPoX4I9UOoH0L9EOqHUD+E9r48TA9v7vThH+QnnDZH1Dl9+Af5CS+PAF4hdAihvXMRPs6uTU1khbfGs7OscGI8+wahWwjtISxD6BdCewjLEPqF0B7CMoR+IbSHsOwMhdPF15XTJGVRhKu3w5nTKEXDCve/eb8fXjvN8ndDCbuH8r7Fu7DGKg4l/LdJNWIUYW5qEaMIU/7W1NmLYYQpL+usYhxhah+rEAMJU7uscaFGEu73oucqhhKm7rs/8RTC/OPpwtb6uXG/UE8gvGmO6cVprFMIZ0cJm95prhMIl59Q/tOl01wnED5/QtFfw/Hvw9StjF+lF+ufO6DUd+kh3bkDYwm7xRZofaLDUiRht1vBX04jbQok7O5rAAMJ53WAgYQ74L3TPLvCCGsBwwiftsDfTtPsG0o47zf9Od4C7/wf/I71m/eiwpPtUe5brDfAGreiogjfNuJtlXttYYTVQmgPYRlCvxDaQ1iG0C+E9hCWIfQLoT2EZQj94j+k9s7lf8CHhdAjhPbGLxz/u03G/36aqCHUD6F+CPVDqB9C/RDqh1A/hPoh1A+hfgj1Q6gfQv0Q6odQP4T6IdQPoX4I9UOoH0L9EOqHUD+E+iHUD6F+CPVDqB9C/RDqh1A/hPoh1A+hfucgzEOPULmc+tyOudy/AtXzIXnvD+GwAAAAAElFTkSuQmCC"));
                                 loaiSpAdapter = new LoaiSpAdapter(getApplicationContext(),mangloaisp);
                                 listViewManHinhChinh.setAdapter(loaiSpAdapter);
                             }
