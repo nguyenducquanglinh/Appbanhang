@@ -36,6 +36,10 @@ public class GioHangActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gio_hang);
         initView();
         initControl();
+
+        if (Utils.mangmuahang !=null){
+            Utils.mangmuahang.clear();
+        }
         tinhTongTien();
     }
 
@@ -75,7 +79,7 @@ public class GioHangActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ThanhToanActivity.class);
                 intent.putExtra("tongtien",tongtiensp );
-                Utils.manggiohang.clear();
+                //Utils.manggiohang.clear();
 
                 startActivity(intent);
             }

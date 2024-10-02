@@ -91,6 +91,10 @@ public class SearchActivity extends AppCompatActivity {
                                 mauSanPhamList = mauSanPhamModel.getResult();
                                 adapterGiay = new GiayAdapter(getApplicationContext(),mauSanPhamList);
                                 recyclerView.setAdapter(adapterGiay);
+                            }else {
+                                //Toast.makeText(getApplicationContext(), mauSanPhamModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                mauSanPhamList.clear();
+                                adapterGiay.notifyDataSetChanged();
                             }
 
                         },

@@ -20,6 +20,8 @@ import com.example.appbanhang.R;
 import com.example.appbanhang.utils.Utils;
 import com.nex3z.notificationbadge.NotificationBadge;
 
+import io.paperdb.Paper;
+
 public class ChiTietActivity extends AppCompatActivity {
     TextView tensp, giasp, mota;
     Button btnthem;
@@ -43,7 +45,9 @@ public class ChiTietActivity extends AppCompatActivity {
         btnthem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 themGioHang();
+                Paper.book().write("giohang", Utils.manggiohang);
             }
         });
     }
