@@ -3,6 +3,7 @@ package com.example.appbanhang.retrofit;
 import com.example.appbanhang.Model.DonHangModel;
 import com.example.appbanhang.Model.LoaiSpModel;
 import com.example.appbanhang.Model.MauSanPhamModel;
+import com.example.appbanhang.Model.MessageModel;
 import com.example.appbanhang.Model.UserModel;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -70,6 +71,10 @@ public interface ApiBanHang {
             @Field("search") String search
     );
 
-
+    @POST("deleteorder.php")
+    @FormUrlEncoded
+    Observable<MessageModel> deleteOrder(
+            @Field("iddonhang") int id
+    );
 
 }

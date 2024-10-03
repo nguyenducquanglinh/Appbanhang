@@ -1,15 +1,19 @@
 package com.example.appbanhang.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.appbanhang.Adapter.DonHangAdapter;
+import com.example.appbanhang.Interface.ItemClickDeleteListener;
 import com.example.appbanhang.R;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
@@ -42,12 +46,52 @@ public class XemDonActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         donHangModel -> {
-                            DonHangAdapter adapter = new DonHangAdapter(getApplicationContext(), donHangModel.getResult());
+                            DonHangAdapter adapter = new DonHangAdapter(getApplicationContext(), donHangModel.getResult(), new ItemClickDeleteListener() {
+                                @Override
+                                public void onClickDelete(int iddonhang) {
+                                    showDeleteOrder(iddonhang);
+                                }
+                            });
                             redonhang.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
 
                         },
                         throwable -> {
+                            Log.d("loggg", throwable.getMessage());
 
+                        }
+                ));
+
+    }
+
+    private void showDeleteOrder(int iddonhang) {
+        PopupMenu popupMenu = new PopupMenu(this,redonhang.findViewById(R.id.trangthaidon));
+        popupMenu.inflate(R.menu.menu_delete);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.deleteOrder){
+                    deleteOrder(iddonhang);
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void deleteOrder(int iddonhang) {
+        compositeDisposable.add(apiBanHang.deleteOrder(iddonhang)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        messageModel -> {
+                            if (messageModel.isSuccess()){
+                                getOrder();
+                            }
+
+                        },
+                        throwable -> {
+                            Log.d("loggg", throwable.getMessage());
                         }
                 ));
 

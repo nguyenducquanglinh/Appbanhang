@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appbanhang.Interface.ItemClickDeleteListener;
 import com.example.appbanhang.Model.DonHang;
 import com.example.appbanhang.R;
+import com.example.appbanhang.utils.Utils;
 
 import java.util.List;
 
@@ -19,10 +21,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
     private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     Context context;
     List<DonHang> listdonhang;
+    ItemClickDeleteListener deleteListener;
 
-    public DonHangAdapter(Context context, List<DonHang> listdonhang) {
+    public DonHangAdapter(Context context, List<DonHang> listdonhang, ItemClickDeleteListener itemClickDeleteListener) {
         this.context = context;
         this.listdonhang = listdonhang;
+        this.deleteListener = itemClickDeleteListener;
     }
 
     @NonNull
@@ -36,6 +40,14 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         DonHang donHang = listdonhang.get(position);
         holder.txtdonhang.setText("Đơn hàng: " + donHang.getId());
+        holder.txttrangthai.setText(Utils.statusOrser(donHang.getTrangthai()));
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                deleteListener.onClickDelete(donHang.getId());
+                return false;
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(
           holder.reChitiet.getContext(),
           LinearLayoutManager.VERTICAL,
@@ -57,12 +69,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView txtdonhang;
+        TextView txtdonhang, txttrangthai;
         RecyclerView reChitiet;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             txtdonhang = itemView.findViewById(R.id.iddonhang);
+            txttrangthai = itemView.findViewById(R.id.trangthaidon);
             reChitiet = itemView.findViewById(R.id.recycleview_chitiet);
         }
     }

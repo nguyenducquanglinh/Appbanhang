@@ -7,6 +7,7 @@ public class DonHang {
     int iduser;
     String diachi;
     String sodienthoai;
+    int trangthai;
     String tongtien;
     List<Item> item;
 
@@ -56,5 +57,13 @@ public class DonHang {
 
     public void setItem(List<Item> item) {
         this.item = item;
+    }
+
+    public int getTrangthai() {
+        return trangthai;
+    }
+
+    public void setTrangthai(int trangthai) {
+        this.trangthai = trangthai;
     }
 }

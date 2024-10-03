@@ -20,6 +20,9 @@ import com.example.appbanhang.R;
 import com.example.appbanhang.utils.Utils;
 import com.nex3z.notificationbadge.NotificationBadge;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.paperdb.Paper;
 
 public class ChiTietActivity extends AppCompatActivity {
@@ -81,6 +84,7 @@ public class ChiTietActivity extends AppCompatActivity {
             gioHang.setIdsp(mauSanPham.getId());
             gioHang.setTensp(mauSanPham.getTensp());
             gioHang.setHinhsp(mauSanPham.getHinhanh());
+            gioHang.setSltonkho(mauSanPham.getSltonkho());
             Utils.manggiohang.add(gioHang);
         }
 
@@ -107,7 +111,10 @@ public class ChiTietActivity extends AppCompatActivity {
             Glide.with(getApplicationContext()).load(mauSanPham.getHinhanh()).into(imghinhanh);
             giasp.setText(mauSanPham.getGiasp());
 
-            Integer[] so = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            List<Integer> so = new ArrayList<>();
+            for (int i=1; i<mauSanPham.getSltonkho()+1; i++){
+                so.add(i);
+            }
             ArrayAdapter<Integer> adapterspin = new ArrayAdapter<>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, so);
             spinner.setAdapter(adapterspin);
         } else {

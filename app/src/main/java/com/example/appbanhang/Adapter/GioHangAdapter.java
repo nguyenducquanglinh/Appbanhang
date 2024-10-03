@@ -120,7 +120,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
 
                     }
                 }else if (giatri == 2){
-                    if (gioHangList.get(pos).getSoluong() < 11){
+                    if (gioHangList.get(pos).getSoluong() < gioHangList.get(pos).getSltonkho()){
                         int soluongmoi = gioHangList.get(pos).getSoluong()+1;
                         gioHangList.get(pos).setSoluong(soluongmoi);
                     }
